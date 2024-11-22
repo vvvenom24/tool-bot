@@ -1,0 +1,24 @@
+# git
+#.git
+.gitignore
+.gitattributes
+
+# fastRequest
+.fastRequest/
+
+# idea
+.idea/
+*.iml
+
+# targe
+target/
+!target/*.jar
+
+# log
+logs/
+*.log
+*.bak
+*.tmp
+*.conf
+
+heapdump/

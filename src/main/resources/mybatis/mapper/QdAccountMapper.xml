@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="venom.toolbot.mapper.QdAccountMapper">
+  <resultMap id="BaseResultMap" type="venom.toolbot.entity.QdAccount">
+    <!--@mbg.generated-->
+    <!--@Table qd_account-->
+    <id column="account_id" jdbcType="BIGINT" property="accountId" />
+    <result column="app_name" jdbcType="VARCHAR" property="appName" />
+    <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
+    <result column="account_cookie" jdbcType="LONGVARCHAR" property="accountCookie" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    account_id, app_name, login_account, account_cookie
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from qd_account
+    where account_id = #{accountId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from qd_account
+    where account_id = #{accountId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="account_id" keyProperty="accountId" parameterType="venom.toolbot.entity.QdAccount" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into qd_account (app_name, login_account, account_cookie
+      )
+    values (#{appName,jdbcType=VARCHAR}, #{loginAccount,jdbcType=VARCHAR}, #{accountCookie,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="account_id" keyProperty="accountId" parameterType="venom.toolbot.entity.QdAccount" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into qd_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="appName != null">
+        app_name,
+      </if>
+      <if test="loginAccount != null">
+        login_account,
+      </if>
+      <if test="accountCookie != null">
+        account_cookie,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="appName != null">
+        #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginAccount != null">
+        #{loginAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountCookie != null">
+        #{accountCookie,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="venom.toolbot.entity.QdAccount">
+    <!--@mbg.generated-->
+    update qd_account
+    <set>
+      <if test="appName != null">
+        app_name = #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginAccount != null">
+        login_account = #{loginAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountCookie != null">
+        account_cookie = #{accountCookie,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where account_id = #{accountId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="venom.toolbot.entity.QdAccount">
+    <!--@mbg.generated-->
+    update qd_account
+    set app_name = #{appName,jdbcType=VARCHAR},
+      login_account = #{loginAccount,jdbcType=VARCHAR},
+      account_cookie = #{accountCookie,jdbcType=LONGVARCHAR}
+    where account_id = #{accountId,jdbcType=BIGINT}
+  </update>
+</mapper>
