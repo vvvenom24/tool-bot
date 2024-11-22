@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .password-input:focus {
+            border-color: transparent;
+        }
+
+        .input-gradient {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .password-input:focus + .input-gradient {
+            opacity: 1;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #12c2e9, #c471ed);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #f64f59;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-title">Welcome Back</h1>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <input type="password" 
+                       name="password" 
+                       class="password-input" 
+                       placeholder="Enter password"
+                       required>
+                <div class="input-gradient"></div>
+            </div>
+            <button type="submit" class="submit-btn">Login</button>
+            <div class="error-message" th:if="${param.error}">
+                Incorrect password. Please try again.
+            </div>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        // 如果存在错误参数，显示错误信息
+        if ([[${param.error}]] != null) {
+            document.querySelector('.error-message').classList.add('visible');
+        }
+    </script>
+</body>
+</html>
