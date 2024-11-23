@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import venom.toolbot.entity.QdLog;
 import venom.toolbot.exception.TaskRuntimeException;
 import venom.toolbot.mapper.QdLogMapper;
+import venom.toolbot.notify.NotifyHandlerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,15 +16,17 @@ public abstract class AbstractSignInTask {
     protected final String loginAccount;
     protected final String baseUrl;
     protected final QdLogMapper qdLogMapper;
+    protected final NotifyHandlerFactory notifyHandlerFactory;
     protected QdLog qdLog = null;
 
     protected String notifyMessage = null;
 
-    protected AbstractSignInTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
+    protected AbstractSignInTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper, NotifyHandlerFactory notifyHandlerFactory) {
         this.cookies = cookies;
         this.loginAccount = loginAccount;
         this.baseUrl = baseUrl;
         this.qdLogMapper = qdLogMapper;
+        this.notifyHandlerFactory = notifyHandlerFactory;
     }
 
     // 模板方法，定义签到的基本流程
@@ -75,6 +78,9 @@ public abstract class AbstractSignInTask {
             log.info("没有通知需要发送！");
             return;
         }
-        // TODO:发送通知到：email、telegram、wechat
+        boolean sent = notifyHandlerFactory.getNotifyChain().sendNotify(notifyMessage);
+        if (!sent) {
+            log.error("所有通知平台都发送失败！");
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import venom.toolbot.annotation.SignInTask;
 import venom.toolbot.job.AbstractSignInTask;
 import venom.toolbot.mapper.QdLogMapper;
+import venom.toolbot.notify.NotifyHandlerFactory;
 
 import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class SignInTaskFactory {
 
     private final ResourcePatternResolver resourcePatternResolver;
     private final QdLogMapper qdLogMapper;
+    private final NotifyHandlerFactory notifyHandlerFactory;
 
     // 存储任务类型和对应的Class对象
     private final Map<String, TaskInfo> taskRegistry = new HashMap<>();
@@ -58,8 +60,8 @@ public class SignInTaskFactory {
         }
 
         try {
-            return taskInfo.taskClass().getConstructor(Map.class, String.class, String.class, QdLogMapper.class)
-                    .newInstance(cookies, loginAccount, taskInfo.baseUrl(), qdLogMapper);
+            return taskInfo.taskClass().getConstructor(Map.class, String.class, String.class, QdLogMapper.class, NotifyHandlerFactory.class)
+                    .newInstance(cookies, loginAccount, taskInfo.baseUrl(), qdLogMapper, notifyHandlerFactory);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to create task instance: " + taskName, e);
         }

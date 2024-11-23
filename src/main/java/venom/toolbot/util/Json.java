@@ -26,7 +26,7 @@ public final class Json {
         if (StringUtils.isBlank(json)) return new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(json, new TypeReference<List<T>>(){});
+            return objectMapper.readValue(json, new TypeReference<>() {});
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -46,7 +46,7 @@ public final class Json {
         if (object == null) return "";
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(objectMapper);
+            return objectMapper.writeValueAsString(object);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

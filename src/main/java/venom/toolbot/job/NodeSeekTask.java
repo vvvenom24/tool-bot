@@ -5,10 +5,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import venom.toolbot.annotation.SignInTask;
+import venom.toolbot.entity.QdLog;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.NodeSeekRuntimeException;
 import venom.toolbot.mapper.QdLogMapper;
 import venom.toolbot.model.NodeSeekResp;
+import venom.toolbot.notify.NotifyHandlerFactory;
 import venom.toolbot.util.Json;
 
 import java.io.IOException;
@@ -19,12 +21,15 @@ import java.util.Objects;
 @SignInTask(value = "nodeseek", baseUrl = "https://www.nodeseek.com")
 public class NodeSeekTask extends AbstractSignInTask {
 
-    public NodeSeekTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
-        super(cookies, loginAccount, baseUrl, qdLogMapper);
+    public NodeSeekTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper, NotifyHandlerFactory notifyHandlerFactory) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper, notifyHandlerFactory);
     }
 
     @Override
     protected void doSignIn() throws IOException {
+        qdLog = new QdLog();
+        qdLog.setAppName("nodeseek");
+        qdLog.setLoginAccount(loginAccount);
         Pair<Integer, Integer> result = startSignIn();
         notifyMessage = "NodeSeek 签到成功！获得" + result.getLeft() + "个鸡腿，总计" + result.getRight();
     }

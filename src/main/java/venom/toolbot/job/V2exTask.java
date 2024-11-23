@@ -12,6 +12,7 @@ import venom.toolbot.entity.QdLog;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.V2exException;
 import venom.toolbot.mapper.QdLogMapper;
+import venom.toolbot.notify.NotifyHandlerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,8 +24,8 @@ import java.util.Optional;
 @SignInTask(value = "v2ex", baseUrl = "https://www.v2ex.com")
 public class V2exTask extends AbstractSignInTask {
 
-    public V2exTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
-        super(cookies, loginAccount, baseUrl, qdLogMapper);
+    public V2exTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper, NotifyHandlerFactory notifyHandlerFactory) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper, notifyHandlerFactory);
     }
 
     @Override

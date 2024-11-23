@@ -6,10 +6,12 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import venom.toolbot.annotation.SignInTask;
+import venom.toolbot.entity.QdLog;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.HifiniRuntimeException;
 import venom.toolbot.mapper.QdLogMapper;
 import venom.toolbot.model.HifiniResp;
+import venom.toolbot.notify.NotifyHandlerFactory;
 import venom.toolbot.util.Json;
 
 import java.io.IOException;
@@ -22,12 +24,15 @@ import java.util.regex.Pattern;
 @SignInTask(value = "hifini", baseUrl = "https://www.hifini.com")
 public class HifiniTask extends AbstractSignInTask {
 
-    public HifiniTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
-        super(cookies, loginAccount, baseUrl, qdLogMapper);
+    public HifiniTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper, NotifyHandlerFactory notifyHandlerFactory) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper, notifyHandlerFactory);
     }
 
     @Override
     protected void doSignIn() throws IOException {
+        qdLog = new QdLog();
+        qdLog.setAppName("hifini");
+        qdLog.setLoginAccount(loginAccount);
         String sign = getSignValue();
         if (sign != null) {
             notifyMessage = "Hifini " + startSignIn(sign);
