@@ -1,6 +1,5 @@
 package venom.toolbot.job;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Connection;
@@ -8,8 +7,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import venom.toolbot.annotation.SignInTask;
+import venom.toolbot.entity.QdLog;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.V2exException;
+import venom.toolbot.mapper.QdLogMapper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -18,41 +20,21 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
-@AllArgsConstructor
-public class V2exTask {
-    private static final String BASE_URL = "https://www.v2ex.com";
-    private static final String BALANCE_URL = BASE_URL + "/balance";
-    private static final String MISSION_URL = BASE_URL + "/mission/daily";
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0";
-    private final Map<String, String> cookies;
+@SignInTask(value = "v2ex", baseUrl = "https://www.v2ex.com")
+public class V2exTask extends AbstractSignInTask {
 
-    public void run() {
-        try {
-            startSignIn();
-        } catch (V2exException v2exException) {
-
-        } catch (Exception e) {
-            log.error("v2ex 签到出现未知异常", e);
-
-        }
-        // 不管签到是否成功，都去获取余额信息
-        try {
-            Pair<Integer, Integer> balance = getBalance();
-            if (Objects.isNull(balance.getLeft())) {
-                // 今天尚未签到
-            } else {
-                // 今天签到成功
-            }
-        } catch (V2exException v2exException) {
-
-        } catch (Exception e) {
-            log.error("v2ex 获取余额出现未知异常", e);
-        }
+    public V2exTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper);
     }
 
-    private void startSignIn() throws IOException {
+    @Override
+    protected void doSignIn() throws IOException {
+        String missionUrl = "/mission/daily";
+        qdLog = new QdLog();
+        qdLog.setAppName("v2ex");
+        qdLog.setLoginAccount(loginAccount);
         // 访问每日任务页面
-        Document missionDoc = Jsoup.connect(MISSION_URL)
+        Document missionDoc = Jsoup.connect(baseUrl + missionUrl)
                 .cookies(cookies)
                 .header("User-Agent", USER_AGENT)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
@@ -87,17 +69,32 @@ public class V2exTask {
         }
 
         // 发送签到请求
-        Connection.Response response = Jsoup.connect(BASE_URL + url)
+        Connection.Response response = Jsoup.connect(baseUrl + url)
                 .cookies(cookies)
-                .header("Referer", MISSION_URL)
+                .header("Referer", baseUrl + missionUrl)
                 .data("once", url.split("=")[1])
                 .method(Connection.Method.GET)
                 .execute();
         log.debug("v2ex 签到响应：{}", response.body().trim());
+        Pair<Integer, Integer> balance = getBalance();
+        Integer today = balance.getLeft();
+        String total = coinConversion(balance.getRight());
+        if (Objects.isNull(today)) {
+            log.error("今天尚未签到成功: {}", response.body());
+            throw new V2exException(TaskStatusEnum.V2EX_UNKNOWN_FAILURE);
+        } else {
+            log.info("今天签到成功，获得 {} 铜币，总计 {}", today, total);
+            notifyMessage = "v2ex 签到成功！获得" + today + "个铜币，总计" + total;
+        }
+    }
+
+    @Override
+    protected String getAppName() {
+        return "v2ex";
     }
 
     private Pair<Integer, Integer> getBalance() throws IOException {
-        Document balanceDoc = Jsoup.connect(BALANCE_URL)
+        Document balanceDoc = Jsoup.connect(baseUrl + "/balance")
                 .cookies(cookies)
                 .get();
         log.debug("v2ex 余额页面: {}", balanceDoc);

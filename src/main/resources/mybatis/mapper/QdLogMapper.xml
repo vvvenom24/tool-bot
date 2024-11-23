@@ -8,10 +8,11 @@
     <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
     <result column="message" jdbcType="VARCHAR" property="message" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="app_name" jdbcType="VARCHAR" property="appName" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, login_account, message, create_time
+    id, login_account, message, create_time, app_name
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -27,10 +28,10 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="venom.toolbot.entity.QdLog" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into qd_log (login_account, message, create_time
-      )
-    values (#{loginAccount,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
+    insert into qd_log (login_account, message, create_time, 
+      app_name)
+    values (#{loginAccount,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{appName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="venom.toolbot.entity.QdLog" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -45,6 +46,9 @@
       <if test="createTime != null">
         create_time,
       </if>
+      <if test="appName != null">
+        app_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="loginAccount != null">
@@ -55,6 +59,9 @@
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appName != null">
+        #{appName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -71,6 +78,9 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="appName != null">
+        app_name = #{appName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -79,7 +89,8 @@
     update qd_log
     set login_account = #{loginAccount,jdbcType=VARCHAR},
       message = #{message,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      app_name = #{appName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -8,10 +8,12 @@
     <result column="app_name" jdbcType="VARCHAR" property="appName" />
     <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
     <result column="account_cookie" jdbcType="LONGVARCHAR" property="accountCookie" />
+    <result column="start_time" jdbcType="TIME" property="startTime" />
+    <result column="end_time" jdbcType="TIME" property="endTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    account_id, app_name, login_account, account_cookie
+    account_id, app_name, login_account, account_cookie, start_time, end_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -27,10 +29,10 @@
   </delete>
   <insert id="insert" keyColumn="account_id" keyProperty="accountId" parameterType="venom.toolbot.entity.QdAccount" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into qd_account (app_name, login_account, account_cookie
-      )
-    values (#{appName,jdbcType=VARCHAR}, #{loginAccount,jdbcType=VARCHAR}, #{accountCookie,jdbcType=LONGVARCHAR}
-      )
+    insert into qd_account (app_name, login_account, account_cookie, 
+      start_time, end_time)
+    values (#{appName,jdbcType=VARCHAR}, #{loginAccount,jdbcType=VARCHAR}, #{accountCookie,jdbcType=LONGVARCHAR}, 
+      #{startTime,jdbcType=TIME}, #{endTime,jdbcType=TIME})
   </insert>
   <insert id="insertSelective" keyColumn="account_id" keyProperty="accountId" parameterType="venom.toolbot.entity.QdAccount" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -45,6 +47,12 @@
       <if test="accountCookie != null">
         account_cookie,
       </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="appName != null">
@@ -55,6 +63,12 @@
       </if>
       <if test="accountCookie != null">
         #{accountCookie,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIME},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIME},
       </if>
     </trim>
   </insert>
@@ -71,6 +85,12 @@
       <if test="accountCookie != null">
         account_cookie = #{accountCookie,jdbcType=LONGVARCHAR},
       </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIME},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIME},
+      </if>
     </set>
     where account_id = #{accountId,jdbcType=BIGINT}
   </update>
@@ -79,7 +99,13 @@
     update qd_account
     set app_name = #{appName,jdbcType=VARCHAR},
       login_account = #{loginAccount,jdbcType=VARCHAR},
-      account_cookie = #{accountCookie,jdbcType=LONGVARCHAR}
+      account_cookie = #{accountCookie,jdbcType=LONGVARCHAR},
+      start_time = #{startTime,jdbcType=TIME},
+      end_time = #{endTime,jdbcType=TIME}
     where account_id = #{accountId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from qd_account
+    </select>
 </mapper>

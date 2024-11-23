@@ -3,6 +3,8 @@ package venom.toolbot.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import venom.toolbot.entity.QdAccount;
 
+import java.util.List;
+
 @Mapper
 public interface QdAccountMapper {
     int deleteByPrimaryKey(Long accountId);
@@ -16,4 +18,6 @@ public interface QdAccountMapper {
     int updateByPrimaryKeySelective(QdAccount record);
 
     int updateByPrimaryKey(QdAccount record);
+
+    List<QdAccount> selectAll();
 }

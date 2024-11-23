@@ -1,13 +1,14 @@
 package venom.toolbot.job;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import venom.toolbot.annotation.SignInTask;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.HifiniRuntimeException;
+import venom.toolbot.mapper.QdLogMapper;
 import venom.toolbot.model.HifiniResp;
 import venom.toolbot.util.Json;
 
@@ -18,27 +19,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-@AllArgsConstructor
-public class HifiniTask {
-    private static final String BASE_URL = "https://www.hifini.com";
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0";
-    private final Map<String, String> cookies;
+@SignInTask(value = "hifini", baseUrl = "https://www.hifini.com")
+public class HifiniTask extends AbstractSignInTask {
 
-    public void run() {
-        try {
-            String sign = getSignValue();
-            if (sign != null) {
-                String result = startSignIn(sign);
-            }
-        } catch (HifiniRuntimeException hifiniException) {
+    public HifiniTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper);
+    }
 
-        } catch (Exception e) {
-            log.error("Hifini 签到出现未知异常", e);
+    @Override
+    protected void doSignIn() throws IOException {
+        String sign = getSignValue();
+        if (sign != null) {
+            notifyMessage = "Hifini " + startSignIn(sign);
         }
     }
 
+    @Override
+    protected String getAppName() {
+        return "hifini";
+    }
+
     private String getSignValue() throws IOException {
-        Connection connection = Jsoup.connect(BASE_URL + "/sg_sign.htm")
+        Connection connection = Jsoup.connect(baseUrl + "/sg_sign.htm")
                 .userAgent(USER_AGENT)
                 .cookies(cookies)
                 .method(Connection.Method.GET)
@@ -65,7 +67,7 @@ public class HifiniTask {
 
     private String startSignIn(String sign) throws IOException {
         // 构建签到请求
-        Connection connection = Jsoup.connect(BASE_URL + "/sg_sign.htm")
+        Connection connection = Jsoup.connect(baseUrl + "/sg_sign.htm")
                 .userAgent(USER_AGENT)
                 .cookies(cookies)
                 .data("sign", sign)
@@ -76,8 +78,8 @@ public class HifiniTask {
                 .header("Sec-Fetch-Mode", "navigate")
                 .header("Sec-Fetch-Site", "same-origin")
                 .header("Sec-Fetch-User", "?1")
-                .header("Origin", BASE_URL)
-                .header("Referer", BASE_URL + "/")
+                .header("Origin", baseUrl)
+                .header("Referer", baseUrl + "/")
                 .method(Connection.Method.POST)
                 .timeout(15000)
                 .ignoreContentType(true);

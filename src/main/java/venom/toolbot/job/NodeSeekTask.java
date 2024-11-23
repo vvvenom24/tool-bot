@@ -1,12 +1,13 @@
 package venom.toolbot.job;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import venom.toolbot.annotation.SignInTask;
 import venom.toolbot.enums.TaskStatusEnum;
 import venom.toolbot.exception.NodeSeekRuntimeException;
+import venom.toolbot.mapper.QdLogMapper;
 import venom.toolbot.model.NodeSeekResp;
 import venom.toolbot.util.Json;
 
@@ -15,26 +16,27 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-@AllArgsConstructor
-public class NodeSeekTask {
+@SignInTask(value = "nodeseek", baseUrl = "https://www.nodeseek.com")
+public class NodeSeekTask extends AbstractSignInTask {
 
-    private static final String BASE_URL = "https://www.nodeseek.com";
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0";
-    private final Map<String, String> cookies;
+    public NodeSeekTask(Map<String, String> cookies, String loginAccount, String baseUrl, QdLogMapper qdLogMapper) {
+        super(cookies, loginAccount, baseUrl, qdLogMapper);
+    }
 
-    public void run() {
-        try {
-            Pair<Integer, Integer> result = startSignIn();
-        } catch (NodeSeekRuntimeException nodeSeekException) {
+    @Override
+    protected void doSignIn() throws IOException {
+        Pair<Integer, Integer> result = startSignIn();
+        notifyMessage = "NodeSeek 签到成功！获得" + result.getLeft() + "个鸡腿，总计" + result.getRight();
+    }
 
-        } catch (Exception e) {
-            log.error("NodeSeek 签到异常", e);
-        }
+    @Override
+    protected String getAppName() {
+        return "nodeseek";
     }
 
     private Pair<Integer, Integer> startSignIn() throws IOException {
         // 构建签到请求
-        Connection connection = Jsoup.connect(BASE_URL + "/api/attendance?random=true")
+        Connection connection = Jsoup.connect(baseUrl + "/api/attendance?random=true")
                 .cookies(cookies)
                 .userAgent(USER_AGENT)
                 .header("sec-ch-ua", "\"Microsoft Edge\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"")
@@ -48,8 +50,8 @@ public class NodeSeekTask {
                 // .header("Sec-Fetch-Dest", "document")
                 // .header("Sec-Fetch-Mode", "navigate")
                 .header("Sec-Fetch-User", "?1")
-                .header("Origin", BASE_URL)
-                .header("Referer", BASE_URL + "/board")
+                .header("Origin", baseUrl)
+                .header("Referer", baseUrl + "/board")
                 .method(Connection.Method.POST)
                 .timeout(15000)
                 .ignoreContentType(true);
