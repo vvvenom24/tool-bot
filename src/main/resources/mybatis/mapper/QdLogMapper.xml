@@ -6,7 +6,7 @@
     <!--@Table qd_log-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="login_account" jdbcType="VARCHAR" property="loginAccount" />
-    <result column="message" jdbcType="LONGVARCHAR" property="message" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -29,7 +29,7 @@
     <!--@mbg.generated-->
     insert into qd_log (login_account, message, create_time
       )
-    values (#{loginAccount,jdbcType=VARCHAR}, #{message,jdbcType=LONGVARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+    values (#{loginAccount,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="venom.toolbot.entity.QdLog" useGeneratedKeys="true">
@@ -51,7 +51,7 @@
         #{loginAccount,jdbcType=VARCHAR},
       </if>
       <if test="message != null">
-        #{message,jdbcType=LONGVARCHAR},
+        #{message,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -66,7 +66,7 @@
         login_account = #{loginAccount,jdbcType=VARCHAR},
       </if>
       <if test="message != null">
-        message = #{message,jdbcType=LONGVARCHAR},
+        message = #{message,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -78,7 +78,7 @@
     <!--@mbg.generated-->
     update qd_log
     set login_account = #{loginAccount,jdbcType=VARCHAR},
-      message = #{message,jdbcType=LONGVARCHAR},
+      message = #{message,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

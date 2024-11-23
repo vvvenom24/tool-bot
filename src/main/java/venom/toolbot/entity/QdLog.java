@@ -9,22 +9,22 @@ import lombok.Data;
 @Data
 public class QdLog {
     /**
-    * 主键
-    */
+     * 主键
+     */
     private Long id;
 
     /**
-    * 签到账号
-    */
+     * 签到账号
+     */
     private String loginAccount;
 
     /**
-    * 签到信息
-    */
+     * 签到信息
+     */
     private String message;
 
     /**
-    * 创建时间
-    */
+     * 创建时间
+     */
     private LocalDateTime createTime;
 }
