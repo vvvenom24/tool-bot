@@ -34,6 +34,7 @@ public abstract class AbstractSignInTask {
         try {
             // 执行签到
             doSignIn();
+            qdLog.setMessage(notifyMessage);
         } catch (Exception e) {
             handleException(e);
         } finally {
