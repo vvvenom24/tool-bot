@@ -1,6 +1,7 @@
 package venom.toolbot.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import venom.toolbot.entity.QdAccount;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface QdAccountMapper {
     int updateByPrimaryKey(QdAccount record);
 
     List<QdAccount> selectAll();
+
+    boolean existsById(@Param("id") Long id);
 }

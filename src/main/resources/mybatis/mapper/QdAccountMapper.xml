@@ -108,4 +108,8 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select * from qd_account
     </select>
+
+  <select id="existsById" resultType="boolean">
+    select exists(select 1 from qd_account where account_id = #{id})
+  </select>
 </mapper>

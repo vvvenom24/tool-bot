@@ -93,4 +93,12 @@
       app_name = #{appName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByLoginAccount" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from qd_log
+    where login_account = #{account} and app_name = #{appName}
+    order by create_time desc
+    </select>
 </mapper>
