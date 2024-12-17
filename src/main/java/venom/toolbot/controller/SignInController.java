@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/sign-in")
+@RequestMapping("/api/sign-in")
 @RequiredArgsConstructor
 public class SignInController {
 

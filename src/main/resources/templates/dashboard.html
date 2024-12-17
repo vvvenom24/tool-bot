@@ -251,7 +251,7 @@
         }
 
         function executeSignIn(id) {
-            $.get(`/api/signin/manual/${id}`, function(response) {
+            $.get(`/api/sign-in/manual/${id}`, function(response) {
                 if (response === 'success') {
                     alert('签到执行成功！');
                 } else {
