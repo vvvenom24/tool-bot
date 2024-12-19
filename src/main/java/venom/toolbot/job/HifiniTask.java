@@ -33,9 +33,11 @@ public class HifiniTask extends AbstractSignInTask {
         qdLog = new QdLog();
         qdLog.setAppName("hifini");
         qdLog.setLoginAccount(loginAccount);
-        String sign = getSignValue();
-        if (sign != null) {
+        String sign = cookies.remove("sign");
+        if (StringUtils.isNotBlank(sign)) {
             notifyMessage = "Hifini " + startSignIn(sign);
+        } else {
+            throw new HifiniRuntimeException(TaskStatusEnum.HIFINI_FAILURE_2);
         }
     }
 
@@ -73,7 +75,7 @@ public class HifiniTask extends AbstractSignInTask {
     private String startSignIn(String sign) throws IOException {
         // 构建签到请求
         Connection connection = Jsoup.connect(baseUrl + "/sg_sign.htm")
-                .userAgent(USER_AGENT)
+                .userAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 18_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Mobile/15E148 Safari/604.1")
                 .cookies(cookies)
                 .data("sign", sign)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
@@ -93,8 +95,7 @@ public class HifiniTask extends AbstractSignInTask {
         String responseText = response.body().trim();
         log.debug("Hifini 签到响应: {}", responseText);
         HifiniResp hifiniResp = Json.parseObject(responseText, HifiniResp.class);
-        if (Objects.isNull(hifiniResp) || !Objects.equals(hifiniResp.getCode(), "0") ||
-                StringUtils.isBlank(hifiniResp.getMessage())) {
+        if (Objects.isNull(hifiniResp) || StringUtils.isBlank(hifiniResp.getMessage())) {
             log.error("Hifini 签到响应异常：{}", responseText);
             throw new HifiniRuntimeException(TaskStatusEnum.HIFINI_FAILURE_3);
         }
